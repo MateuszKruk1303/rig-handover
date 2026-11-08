@@ -1,4 +1,4 @@
-import type { Status } from '../status.js';
+import type { NightSummary, Status } from '../status.js';
 
 export function StatusBoard({ status }: { status: Status }) {
   return (
@@ -20,10 +20,17 @@ export function StatusBoard({ status }: { status: Status }) {
       ) : (
         <ul>
           {status.nights.map((n) => (
-            <li>{n}</li>
+            <li>
+              <a href={`/digest/${n.night}`}>{n.night}</a> {n.counts ? counts(n.counts) : '—'}
+            </li>
           ))}
         </ul>
       )}
     </>
   );
+}
+
+function counts(c: NonNullable<NightSummary['counts']>): string {
+  const base = `${c.ok} ok · ${c.retry} retry · ${c.fail} fail`;
+  return c.unreadable > 0 ? `${base} · ${c.unreadable} unreadable` : base;
 }
